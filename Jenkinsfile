@@ -3,7 +3,7 @@ pipeline {
       branchname =  env.BRANCH_NAME.toLowerCase()
       kubeconfig = getKubeconf(env.branchname)
       registryCredential = 'jenkins_registry'
-      namespace = "${env.branchname == 'release-r2' ? 'cpcodae-hom2' : env.branchname == 'release' ? 'cpcodae-hom' : env.branchname == 'development' ? 'cpcodae-dev' : 'cpcodae'}"
+      namespace = "${env.branchname == 'homolog-r2' ? 'cpcodae-hom2' : env.branchname == 'homolog' ? 'cpcodae-hom' : env.branchname == 'development' ? 'cpcodae-dev' : 'cpcodae'}"
     }
   
 	  agent { kubernetes { 
