@@ -6,7 +6,9 @@
         Guid public_call_id                 { get; init; }
         Guid public_call_answer_id          { get; init; }
         Guid food_id                        { get; init; }
+        string acronym                      { get; init; }
         string name                         { get; init; }
+        string cnpj                         { get; init; }
         string color_class                  { get; }
         int city_members_total              { get; init; }
         int daps_fisicas_total              { get; init; }

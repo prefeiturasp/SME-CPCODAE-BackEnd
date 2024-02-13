@@ -11,6 +11,7 @@ namespace FIA.SME.Aquisicao.Application.Services
         Task SendChangeRequestEmail(User user, string title, string processNumber, string urlPublicCall, List<CooperativeDocument> refusedDocuments);
         Task SendConfirmAnswerEmail(User user, string publicCallName, string publicCallProcessNumber, List<(string, Guid)> foods);
         Task SendConfirmRegistrationEmail(User user, string urlContinueRegistration);
+        Task SendContactEmail(string title, string message, string userName, string cooperativeName, string to, List<string> cc);
         Task SendRecoverPasswordEmail(User user, string urlRecoverPassword);
     }
 
@@ -104,6 +105,8 @@ namespace FIA.SME.Aquisicao.Application.Services
             body.Append("</ul>");
 
             body.Append("<br /><br />");
+            body.Append("O envio da documentação para as chamadas públicas ocorrerá por meio do Sistema AF-CODAE. Esclarecemos, contudo, que o Diário Oficial da Cidade de São Paulo permanece como o veículo oficial de comunicação sobre os processos administrativos. Acompanhe a publicação das atas referentes às chamadas públicas de seu interesse.");
+            body.Append("<br /><br /><br />");
             body.Append("E-mail enviado automaticamente, favor não responder");
 
             body.Append("</div>");
@@ -131,6 +134,28 @@ namespace FIA.SME.Aquisicao.Application.Services
             body.Append("</div>");
 
             await this._mailComponent.SendEmail(user.email, user.name, subject, body.ToString());
+        }
+
+        public async Task SendContactEmail(string title, string message, string userName, string cooperativeName, string to, List<string> cc)
+        {
+            var subject = $"[Contato Via Plataforma] {title}";
+            var body = new StringBuilder();
+
+            body.Append("<div style='font-size: 0.9rem;'>");
+
+            body.Append($"<b>Usuário</b>: {userName}");
+            body.Append("<br />");
+            body.Append($"<b>Cooperativa</b>: {cooperativeName}");
+            body.Append("<br /><br />");
+
+            body.Append($"<b>Mensagem</b>: ");
+            body.Append("<br />");
+            body.Append(message);
+            body.Append("<br /><br />");
+
+            body.Append("</div>");
+
+            await this._mailComponent.SendEmail(to, String.Empty, subject, body.ToString(), cc);
         }
 
         public async Task SendRecoverPasswordEmail(User user, string urlRecoverPassword)

@@ -35,8 +35,8 @@ namespace FIA.SME.Aquisicao.Api.Models
             public string food_name                 { get; set;} = String.Empty;
             public bool is_organic                  { get; set; }
             public int city_id                      { get; set; } = 0;
-            public int city_members_total           { get; set; } = 0;
-            public int daps_fisicas_total           { get; set; } = 0;
+            //public int city_members_total           { get; set; } = 0;
+            //public int daps_fisicas_total           { get; set; } = 0;
             public int indigenous_community_total   { get; set; } = 0;
             public int pnra_settlement_total        { get; set; } = 0;
             public int quilombola_community_total   { get; set; } = 0;

@@ -1,4 +1,5 @@
-﻿using FIA.SME.Aquisicao.Infrastructure.Interfaces;
+﻿using FIA.SME.Aquisicao.Core.Helpers;
+using FIA.SME.Aquisicao.Infrastructure.Interfaces;
 
 namespace FIA.SME.Aquisicao.Infrastructure.Models
 {
@@ -16,6 +17,8 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.cooperative_id = answer.cooperative.id;
             this.food_id = food_id;
             this.name = answer.cooperative.name!;
+            this.acronym = answer.cooperative.acronym!;
+            this.cnpj = answer.cooperative.cnpj.FormatCNPJ();
             this.city_members_total = answer.city_members_total;
             this.daps_fisicas_total = answer.daps_fisicas_total;
             this.indigenous_community_total = answer.indigenous_community_total;
@@ -45,7 +48,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public Guid public_call_id              { get; init; }
         public Guid public_call_answer_id       { get; init; }
         public Guid food_id                     { get; init; }
+        public string acronym                   { get; init; }
         public string name                      { get; init; }
+        public string cnpj                      { get; init; }
         public string color_class               { get; private set; }
         public int city_members_total           { get; init; }
         public int daps_fisicas_total           { get; init; } = 0;
@@ -93,7 +98,8 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
                 if (total == 0)
                     return 0;
 
-                return (decimal)total_inclusiveness * 100 / (decimal)total;
+                //return (decimal)total_inclusiveness * 100 / (decimal)total;
+                return (decimal)total_inclusiveness * 100;
             }
         }
 

@@ -8,7 +8,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Components
 {
     public interface IMailComponent
     {
-        Task SendEmail(string toAddress, string toName, string subject, string bodyHtml);
+        Task SendEmail(string toAddress, string toName, string subject, string bodyHtml, List<string>? ccs = null);
     }
 
     internal class MailComponent : IMailComponent
@@ -20,11 +20,19 @@ namespace FIA.SME.Aquisicao.Infrastructure.Components
             this._configuration = configuration;
         }
 
-        public async Task SendEmail(string toAddress, string toName, string subject, string bodyHtml)
+        public async Task SendEmail(string toAddress, string toName, string subject, string bodyHtml, List<string>? ccs = null)
         {
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress(this._configuration["Email:From:Name"], this._configuration["Email:From:Address"]));
             email.To.Add(new MailboxAddress(toName, toAddress));
+
+            if (ccs != null && ccs.Count > 0)
+            {
+                foreach (var cc in ccs.Distinct())
+                {
+                    email.Cc.Add(new MailboxAddress(String.Empty, cc));
+                }
+            }
 
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = bodyHtml };

@@ -54,6 +54,14 @@ namespace FIA.SME.Aquisicao.Core.Helpers
             return Convert.ToUInt64(cpf.ToOnlyNumbers()).ToString(@"000\.000\.000\-00");
         }
 
+        public static string FormatCNPJ(this string cnpj)
+        {
+            if (String.IsNullOrEmpty(cnpj))
+                return String.Empty;
+
+            return Convert.ToUInt64(cnpj.ToOnlyNumbers()).ToString(@"00\.000\.000/0000\-00");
+        }
+
         public static string FormatPhoneNumber(this string phone)
         {
             if (String.IsNullOrEmpty(phone))

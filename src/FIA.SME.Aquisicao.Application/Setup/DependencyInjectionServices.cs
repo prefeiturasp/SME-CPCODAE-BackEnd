@@ -15,6 +15,7 @@ namespace FIA.SME.Aquisicao.Application.Setup
             services.AddScoped<ICooperativeService, CooperativeService>();
             services.AddScoped<ICooperativeDocumentService, CooperativeDocumentService>();
             services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+            services.AddScoped<IFaleConoscoService, FaleConoscoService>();
             services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IPublicCallService, PublicCallService>();

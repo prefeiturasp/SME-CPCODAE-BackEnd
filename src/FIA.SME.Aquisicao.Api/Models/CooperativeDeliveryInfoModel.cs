@@ -18,7 +18,9 @@ namespace FIA.SME.Aquisicao.Api.Models
             this.public_call_id = cooperative.public_call_id;
             this.public_call_answer_id = cooperative.public_call_answer_id;
             this.food_id = cooperative.food_id;
+            this.acronym = cooperative.acronym;
             this.name = cooperative.name;
+            this.cnpj = cooperative.cnpj;
             this.color_class = cooperative.color_class;
             this.city_members_total = cooperative.city_members_total;
             this.daps_fisicas_total = cooperative.daps_fisicas_total;
@@ -68,7 +70,9 @@ namespace FIA.SME.Aquisicao.Api.Models
         public Guid public_call_id                  { get; set; }
         public Guid public_call_answer_id           { get; set; }
         public Guid food_id                         { get; set; }
+        public string acronym                       { get; set; } = String.Empty;
         public string name                          { get; set; } = String.Empty;
+        public string cnpj                          { get; set; } = String.Empty;
         public string color_class                   { get; set; } = String.Empty;
         public int city_members_total               { get; set; } = 0;
         public int daps_fisicas_total               { get; set; } = 0;

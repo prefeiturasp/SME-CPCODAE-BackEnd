@@ -112,8 +112,11 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             {
                 var members = item.members.ConvertAll(m => new PublicCallAnswerMemberSimplified(m.id, m.cpf, m.dap_caf_code, m.price, m.quantity));
 
+                //var public_call_answer_id = await this._publicCallAnswerService.Add(public_call_id, cooperative_id, item.food_id,
+                //    item.city_id, item.is_organic, item.city_members_total, item.daps_fisicas_total, item.indigenous_community_total,
+                //    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, members);
                 var public_call_answer_id = await this._publicCallAnswerService.Add(public_call_id, cooperative_id, item.food_id,
-                    item.city_id, item.is_organic, item.city_members_total, item.daps_fisicas_total, item.indigenous_community_total,
+                    item.city_id, item.is_organic, city_members_total: 0, daps_fisicas_total: 0, item.indigenous_community_total,
                     item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, members);
 
                 if (public_call_answer_id == Guid.Empty)
@@ -688,16 +691,20 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 {
                     item.city_id = currentPublicAnswerId.city_id;
                     item.is_organic = currentPublicAnswerId.is_organic;
-                    item.city_members_total = currentPublicAnswerId.city_members_total;
-                    item.daps_fisicas_total = currentPublicAnswerId.daps_fisicas_total;
+                    //item.city_members_total = currentPublicAnswerId.city_members_total;
+                    //item.daps_fisicas_total = currentPublicAnswerId.daps_fisicas_total;
                     item.indigenous_community_total = currentPublicAnswerId.indigenous_community_total;
                     item.pnra_settlement_total = currentPublicAnswerId.pnra_settlement_total;
                     item.quilombola_community_total = currentPublicAnswerId.quilombola_community_total;
                     item.other_family_agro_total = currentPublicAnswerId.other_family_agro_total;
                 }
 
+                //var public_call_answer_id = await this._publicCallAnswerService.Update(public_call_id, cooperative_id, item.food_id,
+                //    item.city_id, item.is_organic, item.city_members_total, item.daps_fisicas_total, item.indigenous_community_total,
+                //    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total,
+                //    members, model.change_request_title, model.change_request_message);
                 var public_call_answer_id = await this._publicCallAnswerService.Update(public_call_id, cooperative_id, item.food_id,
-                    item.city_id, item.is_organic, item.city_members_total, item.daps_fisicas_total, item.indigenous_community_total,
+                    item.city_id, item.is_organic, city_members_total: 0, daps_fisicas_total: 0, item.indigenous_community_total,
                     item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total,
                     members, model.change_request_title, model.change_request_message);
 
