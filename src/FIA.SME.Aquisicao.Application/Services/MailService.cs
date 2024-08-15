@@ -11,7 +11,7 @@ namespace FIA.SME.Aquisicao.Application.Services
         Task SendChangeRequestEmail(User user, string title, string processNumber, string urlPublicCall, List<CooperativeDocument> refusedDocuments);
         Task SendConfirmAnswerEmail(User user, string publicCallName, string publicCallProcessNumber, List<(string, Guid)> foods);
         Task SendConfirmRegistrationEmail(User user, string urlContinueRegistration);
-        Task SendContactEmail(string title, string message, string userName, string cooperativeName, string to, List<string> cc);
+        Task SendContactEmail(string title, string message, string userName, string cooperativeName, string publicCallName, string publicCallNumber, string publicCallProcess, string to, List<string> cc);
         Task SendRecoverPasswordEmail(User user, string urlRecoverPassword);
     }
 
@@ -136,7 +136,7 @@ namespace FIA.SME.Aquisicao.Application.Services
             await this._mailComponent.SendEmail(user.email, user.name, subject, body.ToString());
         }
 
-        public async Task SendContactEmail(string title, string message, string userName, string cooperativeName, string to, List<string> cc)
+        public async Task SendContactEmail(string title, string message, string userName, string cooperativeName, string publicCallName, string publicCallNumber, string publicCallProcess, string to, List<string> cc)
         {
             var subject = $"[Contato Via Plataforma] {title}";
             var body = new StringBuilder();
@@ -146,6 +146,12 @@ namespace FIA.SME.Aquisicao.Application.Services
             body.Append($"<b>Usuário</b>: {userName}");
             body.Append("<br />");
             body.Append($"<b>Cooperativa</b>: {cooperativeName}");
+            body.Append("<br />");
+            body.Append($"<b>Chamada Pública</b>: {publicCallName}");
+            body.Append("<br />");
+            body.Append($"<b>Número</b>: {publicCallNumber}");
+            body.Append("<br />");
+            body.Append($"<b>Processo</b>: {publicCallProcess}");
             body.Append("<br /><br />");
 
             body.Append($"<b>Mensagem</b>: ");

@@ -25,6 +25,13 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Types
         public DateTime data_inscricao_inicio   { get; set; }
         public DateTime data_inscricao_termino  { get; set; }
         public DateTime data_sessao_publica     { get; set; }
+        public DateTime? data_habilitacao       { get; set; }
+        public DateTime? data_homologacao       { get; set; }
+        public DateTime? data_contratacao       { get; set; }
+        public DateTime? data_contrato_executado { get; set; }
+        public DateTime? data_suspensao         { get; set; }
+        public DateTime? data_cancelamento      { get; set; }
+        public DateTime? data_deserta           { get; set; }
         public bool ativa                       { get; set; }
 
         public virtual ICollection<ChamadaPublicaAlimento> ChamadaPublicaAlimentos { get; set; }

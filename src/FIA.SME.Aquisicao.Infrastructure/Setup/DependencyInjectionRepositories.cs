@@ -26,12 +26,14 @@ namespace FIA.SME.Aquisicao.Application.Setup
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IBankRepository, BankRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
             services.AddScoped<IChangeRequestRepository, ChangeRequestRepository>();
             services.AddScoped<ICooperativeRepository, CooperativeRepository>();
             services.AddScoped<ICooperativeDocumentRepository, CooperativeDocumentRepository>();
             services.AddScoped<ICooperativeLegalRepresentativeRepository, CooperativeLegalRepresentativeRepository>();
             services.AddScoped<ICooperativeMemberRepository, CooperativeMemberRepository>();
             services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+            services.AddScoped<IFaleConoscoRepository, FaleConoscoRepository>();
             services.AddScoped<IFoodRepository, FoodRepository>();
             services.AddScoped<ILocationRegionRepository, LocationRegionRepository>();
             services.AddScoped<IPublicCallRepository, PublicCallRepository>();

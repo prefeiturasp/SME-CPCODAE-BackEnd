@@ -23,7 +23,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this._members = new List<CooperativeMember>();
         }
 
-        public Cooperative(Guid id, Guid user_id, string name, string acronym, string email, string phone, string cnpj, string? cnpj_central, bool is_dap, string dap_caf_code, DateTime dap_caf_registration_date,
+        public Cooperative(Guid id, Guid user_id, string name, string acronym, string email, string logo, string phone, string cnpj, string? cnpj_central, bool is_dap, string dap_caf_code, DateTime dap_caf_registration_date,
             DateTime dap_caf_expiration_date, CooperativePJTypeEnum pj_type, CooperativeProductionTypeEnum production_type, CooperativeStatusEnum status, string terms_use_acceptance_ip, 
             DateTime terms_use_acceptance_date, bool is_active, List<CooperativeDocument> documents, List<CooperativeMember> members)
         {
@@ -34,6 +34,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.cnpj_central = String.IsNullOrEmpty(cnpj_central) ? null : cnpj_central.ToOnlyNumbers();
             this.dap_caf_code = dap_caf_code.ToUpper();
             this.email = email;
+            this.logo = logo;
             this.name = name.ToTitleCase();
             this.phone = phone;
             this.dap_caf_registration_date = dap_caf_registration_date;
@@ -65,6 +66,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.dap_caf_code = cooperativa.codigo_dap_caf;
             this.acronym = cooperativa.sigla;
             this.email = cooperativa.email;
+            this.logo = cooperativa.logo;
             this.name = cooperativa.razao_social;
             this.phone = cooperativa.telefone;
             this.pj_type = (CooperativePJTypeEnum)cooperativa.tipo_pessoa_juridica;
@@ -87,14 +89,15 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             if (cooperativa.Documentos != null && cooperativa.Documentos.Any())
                 this._documents = cooperativa.Documentos.Select(d => new CooperativeDocument(d)).ToList();
 
-            //if (cooperativa.Banco != null)
-            //    this.UpdateBank(cooperativa.Banco.id, cooperativa.Banco.codigo, cooperativa.Banco.nome, cooperativa.Banco.agencia, cooperativa.Banco.numero_conta);
+            if (cooperativa.Banco != null)
+                this.UpdateBank(cooperativa.Banco.id, cooperativa.Banco.codigo, cooperativa.Banco.nome, cooperativa.Banco.agencia, cooperativa.Banco.numero_conta);
 
             if (cooperativa.Endereco != null)
                 this.UpdateAddress(cooperativa.Endereco.id, cooperativa.Endereco.logradouro, cooperativa.Endereco.numero, cooperativa.Endereco.complemento, cooperativa.Endereco.bairro, cooperativa.Endereco.cep, cooperativa.Endereco.codigo_cidade_ibge);
 
             if (cooperativa.RepresentanteLegal != null)
-                this.UpdateLegalRepresentative(cooperativa.RepresentanteLegal.id, cooperativa.RepresentanteLegal.cpf, cooperativa.RepresentanteLegal.nome, cooperativa.RepresentanteLegal.telefone, cooperativa.RepresentanteLegal.Endereco.id,
+                this.UpdateLegalRepresentative(cooperativa.RepresentanteLegal.id, cooperativa.RepresentanteLegal.cpf, cooperativa.RepresentanteLegal.nome, cooperativa.RepresentanteLegal.telefone, (MaritalStatusEnum)cooperativa.RepresentanteLegal.estado_civil, 
+                    cooperativa.RepresentanteLegal.cargo, cooperativa.RepresentanteLegal.data_vigencia_mandato, cooperativa.RepresentanteLegal.Endereco.id,
                     cooperativa.RepresentanteLegal.Endereco.logradouro, cooperativa.RepresentanteLegal.Endereco.numero, cooperativa.RepresentanteLegal.Endereco.complemento, cooperativa.RepresentanteLegal.Endereco.bairro,
                     cooperativa.RepresentanteLegal.Endereco.cep, cooperativa.RepresentanteLegal.Endereco.codigo_cidade_ibge);
         }
@@ -111,9 +114,10 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public string cnpj                                          { get; private set; } = String.Empty;
         public string? cnpj_central                                 { get; private set; }
         public string dap_caf_code                                  { get; private set; } = String.Empty;
+        public string logo                                          { get; private set; } = String.Empty;
         public string? acronym                                      { get; private set; }
         public Address address                                      { get; private set; }
-        //public Bank bank                                            { get; private set; }
+        public Bank bank                                            { get; private set; }
         public string? email                                        { get; private set; }
         public string? phone                                        { get; private set; }
         public string? name                                         { get; private set; }
@@ -180,16 +184,16 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.address_id = id.Value;
         }
 
-        //public void UpdateBank(Guid? id, string code, string name, string agency, string account_number)
-        //{
-        //    if (id == null || id == Guid.Empty)
-        //        id = Guid.NewGuid();
+        public void UpdateBank(Guid? id, string code, string name, string agency, string account_number)
+        {
+            if (id == null || id == Guid.Empty)
+                id = Guid.NewGuid();
 
-        //    this.bank = new Bank(id.Value, code, name, agency, account_number);
-        //    this.bank_id = id.Value;
-        //}
+            this.bank = new Bank(id.Value, code, name, agency, account_number);
+            this.bank_id = id.Value;
+        }
 
-        public void UpdateLegalRepresentative(Guid? id, string cpf, string name, string phone, Guid? address_id, string street, string number, string? complement, string district, string cep, int city_id)
+        public void UpdateLegalRepresentative(Guid? id, string cpf, string name, string phone, MaritalStatusEnum marital_status, string position, DateTime? position_expiration_date, Guid? address_id, string street, string number, string? complement, string district, string cep, int city_id)
         {
             if (id == null || id == Guid.Empty)
                 id = Guid.NewGuid();
@@ -197,7 +201,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             if (address_id == null || address_id == Guid.Empty)
                 address_id = Guid.NewGuid();
 
-            this.legal_representative = new CooperativeLegalRepresentative(id.Value, cpf, name, phone);
+            this.legal_representative = new CooperativeLegalRepresentative(id.Value, cpf, name, phone, marital_status, position, position_expiration_date);
             this.legal_representative.UpdateAddress(address_id.Value, street, number, complement, district, cep, city_id);
             this.legal_representative_id = id.Value;
         }

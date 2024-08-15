@@ -44,7 +44,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 return new ApiResult(new BadRequestApiResponse("Este e-mail já está atribuído a outro usuário"));
 
             var tempPassword = SMEHelper.GetRandomString(8);
-            var user = new User(model.name, model.email, tempPassword, model.role);
+            var user = new User(model.name.Trim(), model.email.Trim(), tempPassword, model.role.Trim());
             var id = await this._userService.Add(user);
 
             var token = await this._authorizationService.CreatePasswordResetHmacCode(model.email, true);
@@ -124,7 +124,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
 
             var changedEmail = (user.email != model.email);
 
-            var updatedUser = new User(model.name, model.email, user.password, user.role, model.is_active);
+            var updatedUser = new User(model.name.Trim(), model.email.Trim(), user.password, user.role.Trim(), model.is_active);
             updatedUser.SetId(model.id);
 
             await this._userService.Update(updatedUser);

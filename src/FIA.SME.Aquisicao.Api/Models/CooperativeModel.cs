@@ -14,11 +14,12 @@ namespace FIA.SME.Aquisicao.Api.Models
             this.user_id = cooperative.user_id;
             this.acronym = cooperative.acronym;
             this.address = new AddressResponse(cooperative.address);
-            //this.bank = new BankResponse(cooperative.bank);
+            this.bank = new BankResponse(cooperative.bank);
             this.cnpj = cooperative.cnpj;
             this.cnpj_central = cooperative.cnpj_central;
             this.dap_caf_code = cooperative.dap_caf_code;
             this.email = cooperative.email;
+            this.logo = cooperative.logo;
             this.name = cooperative.name;
             this.phone = cooperative.phone;
             this.legal_representative = new CooperativeLegalRepresentativeResponse(cooperative.legal_representative);
@@ -40,6 +41,11 @@ namespace FIA.SME.Aquisicao.Api.Models
             {
                 this.documents = cooperative.documents.Select(m => new CooperativeDocumentResponse(m)).ToList();
             }
+
+            if (withChildren && cooperative.bank != null)
+            {
+                this.bank = new BankResponse(cooperative.bank);
+            }
         }
 
         public Guid id                                          { get; set; }
@@ -51,6 +57,7 @@ namespace FIA.SME.Aquisicao.Api.Models
         public string? cnpj_central                             { get; set; } = String.Empty;
         public string dap_caf_code                              { get; set; } = String.Empty;
         public string? email                                    { get; set; } = String.Empty;
+        public string? logo                                     { get; set; } = String.Empty;
         public string? name                                     { get; set; } = String.Empty;
         public string? phone                                    { get; set; } = String.Empty;
         public CooperativeLegalRepresentativeResponse legal_representative  { get; set; }
@@ -73,6 +80,7 @@ namespace FIA.SME.Aquisicao.Api.Models
         public string dap_caf_code              { get; set; } = String.Empty;
         public string name                      { get; set; } = String.Empty;
         public string email                     { get; set; } = String.Empty;
+        public string logo                      { get; set; } = String.Empty;
         public string password                  { get; set; } = String.Empty;
         public string terms_use_acceptance_ip   { get; set; } = String.Empty;
         public bool is_dap                      { get; set; } = true;
@@ -80,6 +88,7 @@ namespace FIA.SME.Aquisicao.Api.Models
         public Guid id                                          { get; set; }
         public string acronym                                   { get; set; } = String.Empty;
         public AddressUpdate address                            { get; set; } = new AddressUpdate();
+        public BankUpdate bank { get; set; } = new BankUpdate();
         public string? cnpj_central                             { get; set; } = String.Empty;
         public string phone                                     { get; set; } = String.Empty;
         public CooperativeLegalRepresentativeUpdate legal_representative { get; set; } = new CooperativeLegalRepresentativeUpdate();
@@ -94,11 +103,12 @@ namespace FIA.SME.Aquisicao.Api.Models
         public Guid id                                          { get; set; }
         public string acronym                                   { get; set; } = String.Empty;
         public AddressUpdate address                            { get; set; } = new AddressUpdate();
-        //public BankUpdate bank                                  { get; set; } = new BankUpdate();
+        public BankUpdate bank                                  { get; set; } = new BankUpdate();
         public string cnpj                                      { get; set; } = String.Empty;
         public string? cnpj_central                             { get; set; } = String.Empty;
         public string dap_caf_code                              { get; set; } = String.Empty;
         public string email                                     { get; set; } = String.Empty;
+        public string logo                                      { get; set; } = String.Empty;
         public string name                                      { get; set; } = String.Empty;
         public string phone                                     { get; set; } = String.Empty;
         public CooperativeLegalRepresentativeUpdate legal_representative { get; set; } = new CooperativeLegalRepresentativeUpdate();
@@ -120,6 +130,7 @@ namespace FIA.SME.Aquisicao.Api.Models
         public string? cnpj_central                             { get; set; } = String.Empty;
         public string dap_caf_code                              { get; set; } = String.Empty;
         public string email                                     { get; set; } = String.Empty;
+        public string logo                                      { get; set; } = String.Empty;
         public string name                                      { get; set; } = String.Empty;
         public string phone                                     { get; set; } = String.Empty;
         public CooperativeLegalRepresentativeUpdate legal_representative { get; set; } = new CooperativeLegalRepresentativeUpdate();

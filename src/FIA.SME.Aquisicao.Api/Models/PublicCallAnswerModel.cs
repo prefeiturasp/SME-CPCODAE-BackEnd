@@ -41,6 +41,7 @@ namespace FIA.SME.Aquisicao.Api.Models
             public int pnra_settlement_total        { get; set; } = 0;
             public int quilombola_community_total   { get; set; } = 0;
             public int other_family_agro_total      { get; set; } = 0;
+            public bool only_woman { get; set; }
             public List<CooperativeDocumentRegistration> documents      { get; set; }    
             public List<PublicCallAnswerProposalMemberRequest> members  { get; set; }
         }

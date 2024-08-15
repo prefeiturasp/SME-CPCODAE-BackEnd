@@ -8,8 +8,6 @@ using FIA.SME.Aquisicao.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Xml.Linq;
-using static FIA.SME.Aquisicao.Api.Models.PublicCallCooperativeInfoResponse;
 
 namespace FIA.SME.Aquisicao.Api.Controllers
 {
@@ -117,7 +115,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 //    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, members);
                 var public_call_answer_id = await this._publicCallAnswerService.Add(public_call_id, cooperative_id, item.food_id,
                     item.city_id, item.is_organic, city_members_total: 0, daps_fisicas_total: 0, item.indigenous_community_total,
-                    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, members);
+                    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, item.only_woman, members);
 
                 if (public_call_answer_id == Guid.Empty)
                     return new ApiResult(new BadRequestApiResponse("Ocorreu um erro inesperado na criação da resposta"));
@@ -297,8 +295,8 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Lista de membros apagada com sucesso", new { public_call_answer_id, change_request_id = changeRequestId }));
         }
 
-        [Authorize(Roles = "cooperativa")]
-        [HttpPost]
+        [Authorize(Roles = "admin")]
+        [HttpPut]
         [Route("confirm-delivery/{public_call_answer_id:guid}")]
         public async Task<IActionResult> ConfirmDeliveryByCooperative(Guid public_call_answer_id)
         {
@@ -308,49 +306,49 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 return new ApiResult(new BadRequestApiResponse("Resposta da Chamada Pública não encontrada"));
 
             publicCallAnswer.SetAsConfirmed();
-            var success = await this._publicCallAnswerService.Update(publicCallAnswer);
+            await this._publicCallAnswerService.Update(publicCallAnswer);
 
-            if (success)
-            {
-                var allChosenAnswers = await this._publicCallAnswerService.GetAllChosenByPublicCallId(publicCallAnswer.public_call_id);
+            //if (success)
+            //{
+            //    var allChosenAnswers = await this._publicCallAnswerService.GetAllChosenByPublicCallId(publicCallAnswer.public_call_id);
 
-                if (allChosenAnswers.All(ca => ca.was_confirmed))
-                    await this._publicCallService.SetAsAwaitingDelivery(publicCallAnswer.public_call_id);
-            }
+            //    if (allChosenAnswers.All(ca => ca.was_confirmed))
+            //        await this._publicCallService.SetAsAwaitingDelivery(publicCallAnswer.public_call_id);
+            //}
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Confirmação de entrega realizada com sucesso", new { public_call_answer_id }));
         }
 
-        [Authorize(Roles = "logistica")]
-        [HttpPut]
-        [Route("confirm-delivery/{id:guid}")]
-        public async Task<IActionResult> ConfirmDeliveryByLogistic([FromBody] PublicCallConfirmDeliveryInfoRequest model, Guid id)
-        {
-            var userIdentity = (System.Security.Claims.ClaimsIdentity)User?.Identity;
+        //[Authorize(Roles = "logistica")]
+        //[HttpPut]
+        //[Route("confirm-delivery/{id:guid}")]
+        //public async Task<IActionResult> ConfirmDeliveryByLogistic([FromBody] PublicCallConfirmDeliveryInfoRequest model, Guid id)
+        //{
+        //    var userIdentity = (System.Security.Claims.ClaimsIdentity)User?.Identity;
 
-            if (userIdentity == null)
-                return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 401"));
+        //    if (userIdentity == null)
+        //        return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 401"));
 
-            var loggedUserId = await this._authorizationSMEService.GetLoggedUserId(userIdentity);
+        //    var loggedUserId = await this._authorizationSMEService.GetLoggedUserId(userIdentity);
 
-            if (loggedUserId == null)
-                return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 403"));
+        //    if (loggedUserId == null)
+        //        return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 403"));
 
-            // Busca as informações da entrega
-            var delivery = await this._publicCallDeliveryService.Get(id, true);
+        //    // Busca as informações da entrega
+        //    var delivery = await this._publicCallDeliveryService.Get(id, true);
 
-            if (delivery == null)
-                return new ApiResult(new BadRequestApiResponse("Dados da entrega não encontrados"));
+        //    if (delivery == null)
+        //        return new ApiResult(new BadRequestApiResponse("Dados da entrega não encontrados"));
 
-            delivery.SetDelivery(loggedUserId.Value, model.delivered_date, model.delivered_quantity);
-            await this._publicCallDeliveryService.Update(delivery);
+        //    delivery.SetDelivery(loggedUserId.Value, model.delivered_date, model.delivered_quantity);
+        //    await this._publicCallDeliveryService.Update(delivery);
 
-            // Checa se a proposta já atingiu 100% de entrega, caso sim, inativa
-            var publicCallId = delivery.answer.public_call_id;
-            var wasCompleted = await this._publicCallService.UpdateIfIsCompleted(publicCallId);
+        //    // Checa se a proposta já atingiu 100% de entrega, caso sim, inativa
+        //    var publicCallId = delivery.answer.public_call_id;
+        //    var wasCompleted = await this._publicCallService.UpdateIfIsCompleted(publicCallId);
 
-            return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Confirmação de entrega efetuada com sucesso", new { id = id, publicCallId = publicCallId, wasCompleted = wasCompleted }));
-        }
+        //    return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Confirmação de entrega efetuada com sucesso", new { id = id, publicCallId = publicCallId, wasCompleted = wasCompleted }));
+        //}
 
         [Authorize(Roles = "admin")]
         [HttpDelete]
@@ -383,6 +381,24 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             await this._publicCallAnswerService.Delete(public_call_answer_id);
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Proposta removida com sucesso", new { public_call_answer_id }));
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete]
+        [Route("setAsDeserta/{id:guid}")]
+        public async Task<IActionResult> DeleteSetAsDeserta(Guid id)
+        {
+            // Busca a chamada
+            var publicCall = await this._publicCallService.Get(id, true);
+
+            if (publicCall == null)
+                return new ApiResult(new BadRequestApiResponse("Chamada Pública não encontrada"));
+
+            publicCall.SetAsDeserta();
+
+            await this._publicCallService.Update(publicCall);
+
+            return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Chamada Pública definida como deserta com sucesso", new { id }));
         }
 
         [Authorize(Roles = "admin")]
@@ -530,7 +546,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
         public async Task<IActionResult> GetAllDashboardCooperativeDeliveryInfo(Guid public_call_answer_id)
         {
             var deliveryProgressData = (await this._publicCallDeliveryService.GetAllDeliveryInfoByPublicCallAnswerId(public_call_answer_id));
-            var deliveryProgress = deliveryProgressData.ConvertAll(d => new CooperativeDeliveryInfoProgressResponse(d.id, d.delivery_date, 0, d.delivery_quantity, d.was_delivered, null, d.delivered_quantity));
+            var deliveryProgress = deliveryProgressData.ConvertAll(d => new PublicCallCooperativeInfoResponse.CooperativeDeliveryInfoProgressResponse(d.id, d.delivery_date, 0, d.delivery_quantity, d.was_delivered, null, d.delivered_quantity));
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, deliveryProgress));
         }
@@ -543,6 +559,36 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             var membersList = (await this._publicCallDeliveryService.GetAllDashboardCooperativeMembersList(public_call_answer_id)).ConvertAll(m => new PublicCallAnswerMemberSimplifiedModel(m.cpf, m.dap_caf_code, m.price, m.quantity));
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, membersList));
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet()]
+        [Route("report")]
+        public async Task<IActionResult> GetAllReport([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int? statusId, [FromQuery] string? filterNameNumberProcess, [FromQuery] bool isTotal = false)
+        {
+            var result = (await this._publicCallService.GetAllReport(startDate, endDate, statusId, filterNameNumberProcess));
+
+            if (!isTotal)
+            {
+                var report = result.ConvertAll(r => new PublicCallReportModel(r));
+                return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, report));
+            }
+            else
+            {
+                var reportTotalizado = new List<PublicCallReportTotalizadoModel>() { new PublicCallReportTotalizadoModel(result) };
+                return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, reportTotalizado));
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet()]
+        [Route("report/cooperativas")]
+        public async Task<IActionResult> GetAllReportCooperatives([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int? statusId, [FromQuery] string? filterNameNumberProcess)
+        {
+            var result = (await this._publicCallService.GetAllReportCooperatives(startDate, endDate, statusId, filterNameNumberProcess));
+
+            var report = result.ConvertAll(r => new PublicCallReportCooperativeModel(r));
+            return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, report));
         }
 
         [AllowAnonymous]
@@ -597,6 +643,19 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, pdfFileBase64));
         }
 
+        [Authorize(Roles = "cooperativa")]
+        [HttpGet()]
+        [Route("dashboard-cooperative/{public_call_answer_id:guid}/report")]
+        public async Task<IActionResult> GetReport(Guid public_call_answer_id)
+        {
+            var fileByteArray = await this._publicCallAnswerService.BuildReport(public_call_answer_id);
+
+            var filename = $"relatorio_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.pdf";
+            var result = File(fileByteArray, "application/pdf", filename);
+
+            return result!;
+        }
+
         [Authorize(Roles = "admin,cooperativa")]
         [HttpGet()]
         [Route("validation-report/{public_call_answer_id:guid}")]
@@ -617,7 +676,17 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             if (cooperativeDocument == null)
                 return new ApiResult(new BadRequestApiResponse("Documento não encontrado"));
 
-            await this._cooperativeDocumentService.SetAsReviewed(cooperative_document_id, model.is_reviewed);
+            var userIdentity = (System.Security.Claims.ClaimsIdentity)User?.Identity;
+
+            if (userIdentity == null)
+                return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 401"));
+
+            var loggedUserId = await this._authorizationSMEService.GetLoggedUserId(userIdentity);
+
+            if (loggedUserId == null)
+                return new ApiResult(new BadRequestApiResponse("Usuário não foi encontrado - 403"));
+
+            await this._cooperativeDocumentService.SetAsReviewed(cooperative_document_id, loggedUserId.Value, model.is_reviewed);
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Alteração de status realizada com sucesso", new { cooperative_document_id, model.is_reviewed }));
         }
@@ -697,6 +766,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                     item.pnra_settlement_total = currentPublicAnswerId.pnra_settlement_total;
                     item.quilombola_community_total = currentPublicAnswerId.quilombola_community_total;
                     item.other_family_agro_total = currentPublicAnswerId.other_family_agro_total;
+                    item.only_woman = currentPublicAnswerId.only_woman;
                 }
 
                 //var public_call_answer_id = await this._publicCallAnswerService.Update(public_call_id, cooperative_id, item.food_id,
@@ -705,7 +775,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 //    members, model.change_request_title, model.change_request_message);
                 var public_call_answer_id = await this._publicCallAnswerService.Update(public_call_id, cooperative_id, item.food_id,
                     item.city_id, item.is_organic, city_members_total: 0, daps_fisicas_total: 0, item.indigenous_community_total,
-                    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total,
+                    item.pnra_settlement_total, item.quilombola_community_total, item.other_family_agro_total, item.only_woman,
                     members, model.change_request_title, model.change_request_message);
 
                 if (public_call_answer_id == Guid.Empty)
@@ -742,6 +812,40 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             }
 
             return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Cadastro realizado com sucesso", new { public_call_answer_ids }));
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpPut]
+        [Route("{public_call_id:guid}/board-of-associates/{cooperative_id:guid}")]
+        public async Task<IActionResult> UpdateBoardOfAssociates([FromBody] MemberInfoRequestModel model, Guid public_call_id, Guid cooperative_id)
+        {
+            var publicCall = await this._publicCallService.Get(public_call_id, false);
+
+            if (publicCall == null)
+                return new ApiResult(new BadRequestApiResponse("Chamada Pública não encontrada"));
+
+            var cooperative = await this._cooperativeService.Get(cooperative_id, false);
+
+            if (cooperative == null)
+                return new ApiResult(new BadRequestApiResponse("Cooperativa não encontrada"));
+
+            var user = await this._userService.Get(cooperative.user_id, false);
+
+            if (user == null)
+                return new ApiResult(new BadRequestApiResponse("Usuário da Cooperativa não encontrado"));
+
+            var publicCallAnswers = await this._publicCallAnswerService.GetAllByCooperativeIdPublicCallId(cooperative_id, public_call_id);
+
+            foreach (var publicCallAnswer in publicCallAnswers)
+            {
+                if (publicCallAnswer == null)
+                    continue;
+
+                publicCallAnswer.UpdateMembersInfo(model.city_id, model.daps_fisicas_total, model.indigenous_community_total, model.pnra_settlement_total, model.quilombola_community_total, model.other_family_agro_total, model.only_woman);
+                await this._publicCallAnswerService.Update(publicCallAnswer);
+            }
+
+            return new ApiResult(new Saida((int)HttpStatusCode.OK, true, "Solicitação de alteração realizada com sucesso", new { publicCallAnswers }));
         }
 
         [Authorize(Roles = "admin")]

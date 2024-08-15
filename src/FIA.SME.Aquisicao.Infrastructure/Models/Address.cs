@@ -38,5 +38,12 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public string? complement   { get; private set; }
         public string district      { get; private set; }
         public string number        { get; private set; }
+
+        public string ToString(IBGEDistrict.IBGEDistrictCity city)
+        {
+            //var comp = String.IsNullOrEmpty(complement) ? String.Empty : $" - {complement}";
+
+            return $"{street}, {number} - {city.nome}/{city.microrregiao.mesorregiao.UF.sigla.ToUpper()}";
+        }
     }
 }

@@ -69,9 +69,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
             }
 
             toSave.id = user.id;
-            toSave.email = user.email;
-            toSave.perfil = user.role;
-            toSave.nome = user.name;
+            toSave.email = user.email.Trim();
+            toSave.perfil = user.role.Trim();
+            toSave.nome = user.name.Trim();
             toSave.senha = user.password;
             toSave.ativo = user.is_active;
         }

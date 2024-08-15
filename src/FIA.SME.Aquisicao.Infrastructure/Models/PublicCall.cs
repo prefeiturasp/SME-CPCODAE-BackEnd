@@ -40,6 +40,13 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
 
             this.id = chamadaPublica.id;
             this.city_id = chamadaPublica.codigo_cidade_ibge;
+            this.data_cancelamento = chamadaPublica.data_cancelamento;
+            this.data_deserta = chamadaPublica.data_deserta;
+            this.data_contratacao = chamadaPublica.data_contratacao;
+            this.data_contrato_executado = chamadaPublica.data_contrato_executado;
+            this.data_habilitacao = chamadaPublica.data_habilitacao;
+            this.data_homologacao = chamadaPublica.data_homologacao;
+            this.data_suspensao = chamadaPublica.data_suspensao;
             this.number = chamadaPublica.numero;
             this.name = chamadaPublica.nome;
             this.type = chamadaPublica.tipo;
@@ -91,6 +98,13 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public DateTime registration_start_date { get; private set; }
         public DateTime registration_end_date   { get; private set; }
         public DateTime public_session_date     { get; private set; }
+        public DateTime? data_habilitacao       { get; private set; }
+        public DateTime? data_homologacao       { get; private set; }
+        public DateTime? data_contratacao       { get; private set; }
+        public DateTime? data_contrato_executado { get; private set; }
+        public DateTime? data_suspensao         { get; private set; }
+        public DateTime? data_cancelamento      { get; private set; }
+        public DateTime? data_deserta           { get; private set; }
         public bool is_active                   { get; private set; }
 
         //public int status
@@ -142,6 +156,13 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             SetStatus(PublicCallStatusEnum.Cancelada);
         }
 
+        public void SetAsDeserta()
+        {
+            this.is_active = false;
+
+            SetStatus(PublicCallStatusEnum.Deserta);
+        }
+
         public void Suspend()
         {
             this.is_active = false;
@@ -179,6 +200,33 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public void SetStatus(PublicCallStatusEnum status)
         {
             this.status_id = (int)status;
+
+            switch (status)
+            {
+                case PublicCallStatusEnum.Aprovada:
+                    this.data_habilitacao = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.Homologada:
+                    this.data_homologacao = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.Contratada:
+                    this.data_contratacao = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.CronogramaExecutado:
+                    this.data_contrato_executado = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.Suspensa:
+                    this.data_suspensao = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.Cancelada:
+                    this.data_cancelamento = DateTime.Now;
+                    break;
+                case PublicCallStatusEnum.Deserta:
+                    this.data_deserta = DateTime.Now;
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion [ FIM - Metodos ]

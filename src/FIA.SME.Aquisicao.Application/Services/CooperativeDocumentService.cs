@@ -15,7 +15,7 @@ namespace FIA.SME.Aquisicao.Application.Services
         Task<string> GetCooperativeCurrentZippedDocumentsByPublicCall(Guid publicCallId, Guid cooperativeId);
         Task<string> GetDocumentFileBase64(Guid documentId);
         Task Remove(Guid id);
-        Task SetAsReviewed(Guid id, bool isReviewed);
+        Task SetAsReviewed(Guid id, Guid userId, bool isReviewed);
     }
 
     internal class CooperativeDocumentService : ICooperativeDocumentService
@@ -143,13 +143,13 @@ namespace FIA.SME.Aquisicao.Application.Services
             }
         }
 
-        public async Task SetAsReviewed(Guid id, bool isReviewed)
+        public async Task SetAsReviewed(Guid id, Guid userId, bool isReviewed)
         {
             var document = await this._cooperativeDocumentRepository.Get(id, true);
 
             if (document != null)
             {
-                document.SetAsReviewed(isReviewed);
+                document.SetAsReviewed(isReviewed, userId);
 
                 await this._cooperativeDocumentRepository.Save(document);
                 await this._cooperativeDocumentRepository.UnitOfWork.Commit();

@@ -70,7 +70,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
 
         public async Task<List<CooperativeDocument>> GetAllCooperativeDocumentsByPublicCall(Guid publicCallId, List<Guid> cooperativeIds)
         {
-            return await this._context.DocumentoCooperativa.Include(d => d.TipoDocumento)
+            return await this._context.DocumentoCooperativa
+                                .Include(d => d.TipoDocumento)
+                                .Include(d => d.Usuario)
                                 .AsNoTracking()
                                 .Where(d => cooperativeIds.Contains(d.cooperativa_id) && (d.chamada_publica_id == null || d.chamada_publica_id == publicCallId))
                                 .OrderBy(d => d.cooperativa_id)
@@ -111,6 +113,8 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
             toSave.documento_tamanho = document.file_size;
             toSave.is_atual = document.is_current;
             toSave.is_revisado = document.is_reviewed;
+            toSave.usuario_id = document.user_id;
+            toSave.data_revisao = document.reviewed_date.SetKindUtc();
         }
 
         public void Dispose()

@@ -7,6 +7,7 @@
         Guid public_call_answer_id          { get; init; }
         Guid food_id                        { get; init; }
         string acronym                      { get; init; }
+        string state_acronym                { get; init; }
         string name                         { get; init; }
         string cnpj                         { get; init; }
         string color_class                  { get; }
@@ -16,6 +17,7 @@
         int pnra_settlement_total           { get; init; }
         int quilombola_community_total      { get; init; }
         int other_family_agro_total         { get; init; }
+        bool only_woman { get; init; }
         decimal total_delivered             { get; }
         decimal total_proposal              { get; }
         decimal? total_proposal_edited      { get; }
@@ -32,5 +34,6 @@
         string location                     { get; }
         bool members_validated              { get; }
         bool was_chosen                     { get; }
+        bool was_confirmed                  { get; }
     }
 }

@@ -171,8 +171,8 @@ namespace FIA.SME.Aquisicao.Application.Services
             if (cooperative.address != null)
                 await this._addressRepository.Save(cooperative.address);
 
-            //if (cooperative.bank != null)
-            //    await this._bankRepository.Save(cooperative.bank);
+            if (cooperative.bank != null)
+                await this._bankRepository.Save(cooperative.bank);
 
             if (cooperative.legal_representative != null && cooperative.legal_representative.address != null)
             {

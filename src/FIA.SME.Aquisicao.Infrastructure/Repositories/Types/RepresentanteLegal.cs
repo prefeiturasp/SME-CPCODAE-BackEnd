@@ -13,6 +13,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Types
         public string cpf       { get; set; }
         public string nome      { get; set; }
         public string telefone  { get; set; }
+        public string cargo { get; set; } = String.Empty;
+        public DateTime? data_vigencia_mandato { get; set; }
+        public int estado_civil { get; set; }
 
         public virtual Endereco Endereco { get; set; }
     }

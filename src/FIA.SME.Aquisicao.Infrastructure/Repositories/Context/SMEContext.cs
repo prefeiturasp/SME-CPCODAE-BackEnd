@@ -11,6 +11,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Context
         public DbSet<Alimento> Alimento                                                 { get; set; }
         public DbSet<Banco> Banco                                                       { get; set; }
         public DbSet<Categoria> Categoria                                               { get; set; }
+        public DbSet<Configuracao> Configuracao                                         { get; set; }
         public DbSet<ChamadaPublica> ChamadaPublica                                     { get; set; }
         public DbSet<ChamadaPublicaAlimento> ChamadaPublicaAlimento                     { get; set; }
         public DbSet<ChamadaPublicaDocumento> ChamadaPublicaDocumento                   { get; set; }
@@ -21,6 +22,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Context
         public DbSet<Cooperativa> Cooperativa                                           { get; set; }
         public DbSet<DocumentoCooperativa> DocumentoCooperativa                         { get; set; }
         public DbSet<Endereco> Endereco                                                 { get; set; }
+        public DbSet<FaleConosco> FaleConosco                                           { get; set; }
         public DbSet<LocalidadeRegiao> LocalidadeRegiao                                 { get; set; }
         public DbSet<RepresentanteLegal> RepresentanteLegal                             { get; set; }
         public DbSet<SolicitacaoAlteracao> SolicitacaoAlteracao                         { get; set; }

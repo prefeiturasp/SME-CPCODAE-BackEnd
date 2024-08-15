@@ -85,7 +85,9 @@ namespace FIA.SME.Aquisicao.Api.Controllers
 
             // Atualiza os dados da de endereço cooperativa
             cooperative.UpdateAddress(model.address.id, model.address.street, model.address.number, model.address.complement, model.address.district, model.address.cep, model.address.city_id);
+            cooperative.UpdateBank(model.bank.id, model.bank.code, model.bank.name, model.bank.agency, model.bank.account_number);
             cooperative.UpdateLegalRepresentative(model.legal_representative.id, model.legal_representative.cpf, model.legal_representative.name, model.legal_representative.phone,
+                model.legal_representative.marital_status, model.legal_representative.position, model.legal_representative.position_expiration_date,
                 model.legal_representative.address.id, model.legal_representative.address.street, model.legal_representative.address.number, model.legal_representative.address.complement,
                 model.legal_representative.address.district, model.legal_representative.address.cep, model.legal_representative.address.city_id);
             await this._cooperativeService.Update(cooperative);
@@ -224,9 +226,7 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             var cooperative = new CooperativeDetailResponse(await this._cooperativeService.Get(id), true);
 
             if (cooperative != null)
-            {
                 return new ApiResult(new Saida((int)HttpStatusCode.OK, true, String.Empty, cooperative));
-            }
 
             return new ApiResult(new NoContentApiResponse());
         }
@@ -321,13 +321,14 @@ namespace FIA.SME.Aquisicao.Api.Controllers
             if (cooperative == null)
                 return new ApiResult(new BadRequestApiResponse("Cooperativa não encontrada"));
 
-            var updatedCooperative = new Cooperative(model.id, cooperative.user_id, model.name, model.acronym, model.email, model.phone, model.cnpj, model.cnpj_central, cooperative.is_dap, cooperative.dap_caf_code,
+            var updatedCooperative = new Cooperative(model.id, cooperative.user_id, model.name, model.acronym, model.email, model.logo, model.phone, model.cnpj, model.cnpj_central, cooperative.is_dap, cooperative.dap_caf_code,
                 model.dap_caf_registration_date, model.dap_caf_expiration_date, model.pj_type, model.production_type, cooperative.status, cooperative.terms_use_acceptance_ip, 
                 cooperative.terms_use_acceptance_date, true, new List<CooperativeDocument>(), cooperative.members.ToList());
 
             updatedCooperative.UpdateAddress(cooperative.address?.id, model.address.street, model.address.number, model.address.complement, model.address.district, model.address.cep, model.address.city_id);
-            //updatedCooperative.UpdateBank(cooperative.bank?.id, model.bank.code, model.bank.name, model.bank.agency, model.bank.account_number);
+            updatedCooperative.UpdateBank(cooperative.bank?.id, model.bank.code, model.bank.name, model.bank.agency, model.bank.account_number);
             updatedCooperative.UpdateLegalRepresentative(cooperative.legal_representative?.id, model.legal_representative.cpf, model.legal_representative.name, model.legal_representative.phone, 
+                model.legal_representative.marital_status, model.legal_representative.position, model.legal_representative.position_expiration_date,
                 cooperative.legal_representative?.address?.id, model.legal_representative.address.street, model.legal_representative.address.number, model.legal_representative.address.complement,
                 model.legal_representative.address.district, model.legal_representative.address.cep, model.legal_representative.address.city_id);
 
@@ -374,15 +375,19 @@ namespace FIA.SME.Aquisicao.Api.Controllers
                 return new ApiResult(new BadRequestApiResponse($"Esta {tipo} já está atribuída a outra cooperativa"));
             }
 
-            var updatedCooperative = new Cooperative(model.id, cooperative.user_id, model.name, model.acronym, model.email, model.phone, model.cnpj, model.cnpj_central, model.is_dap, model.dap_caf_code,
+            var updatedCooperative = new Cooperative(model.id, cooperative.user_id, model.name, model.acronym, model.email, model.logo, model.phone, model.cnpj, model.cnpj_central, model.is_dap, model.dap_caf_code,
                 model.dap_caf_registration_date, model.dap_caf_expiration_date, model.pj_type, model.production_type, cooperative.status, cooperative.terms_use_acceptance_ip, 
                 cooperative.terms_use_acceptance_date, model.is_active, cooperative.documents.ToList(),
                 cooperative.members.ToList());
 
             updatedCooperative.UpdateAddress(cooperative.address.id, model.address.street, model.address.number, model.address.complement, model.address.district, model.address.cep, model.address.city_id);
-            //updatedCooperative.UpdateBank(cooperative.bank.id, model.bank.code, model.bank.name, model.bank.agency, model.bank.account_number);
-            updatedCooperative.UpdateLegalRepresentative(cooperative.legal_representative.id, model.legal_representative.cpf, model.legal_representative.name, model.legal_representative.phone, cooperative.legal_representative.address.id,
-                model.legal_representative.address.street, model.legal_representative.address.number, model.legal_representative.address.complement, model.legal_representative.address.district,
+            
+            var bankId = cooperative.bank_id ?? Guid.NewGuid();
+
+            updatedCooperative.UpdateBank(bankId, model.bank.code, model.bank.name, model.bank.agency, model.bank.account_number);
+            updatedCooperative.UpdateLegalRepresentative(cooperative.legal_representative.id, model.legal_representative.cpf, model.legal_representative.name, model.legal_representative.phone,
+                model.legal_representative.marital_status, model.legal_representative.position, model.legal_representative.position_expiration_date,
+                cooperative.legal_representative.address.id, model.legal_representative.address.street, model.legal_representative.address.number, model.legal_representative.address.complement, model.legal_representative.address.district,
                 model.legal_representative.address.cep, model.legal_representative.address.city_id);
 
             await this._cooperativeService.Update(updatedCooperative);

@@ -10,6 +10,7 @@ namespace FIA.SME.Aquisicao.Application.Setup
         {
             services.AddScoped<IAuthorizationSMEService, AuthorizationSMEService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IChangeRequestService, ChangeRequestService>();
             services.AddScoped<ICooperativeMemberService, CooperativeMemberService>();
             services.AddScoped<ICooperativeService, CooperativeService>();

@@ -11,9 +11,11 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
         Task Delete(Guid id);
         Task<PublicCallAnswer?> Get(Guid id, bool keepTrack);
         Task<List<PublicCallAnswer>> GetAllByCooperativeId(Guid cooperativeId);
+        Task<List<PublicCallAnswer>> GetAllByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId);
         Task<List<PublicCallAnswer>> GetAllByIds(List<Guid> ids);
         Task<List<PublicCallAnswer>> GetAllByPublicCallId(Guid publicCallId);
         Task<List<PublicCallAnswer>> GetAllChosenByPublicCallId(Guid publicCallId);
+        Task<List<PublicCallAnswer>> GetAllWithCooperativeChamadaPublica(Guid cooperativeId, Guid publicCallId);
         Task<PublicCallAnswer?> GetByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId);
         Task<PublicCallAnswer?> GetByCooperativeIdPublicCallIdFoodId(Guid cooperativeId, Guid publicCallId, Guid foodId);
         Task Save(PublicCallAnswer answer);
@@ -51,28 +53,15 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
 
         public async Task<PublicCallAnswer?> Get(Guid id, bool keepTrack)
         {
-            var query = this._context.ChamadaPublicaResposta!.Where(d => d.id == id);
+            var query = this._context.ChamadaPublicaResposta!
+                                    .Include(cpr => cpr.Cooperativa.Banco)
+                                    .Include(cpr => cpr.Cooperativa.Endereco)
+                                    .Include(cpr => cpr.Cooperativa.RepresentanteLegal.Endereco)
+                                    .Include(cpr => cpr.ChamadaPublica.ChamadaPublicaAlimentos).ThenInclude(cpa => cpa.Alimento)
+                                    .Where(d => d.id == id);
 
             if (!keepTrack)
                 query = query.AsNoTracking();
-
-            var answer = await query.FirstOrDefaultAsync();
-
-            return (answer != null) ? new PublicCallAnswer(answer) : null;
-        }
-
-        public async Task<PublicCallAnswer?> GetByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId)
-        {
-            var query = this._context.ChamadaPublicaResposta!.Where(d => d.cooperativa_id == cooperativeId && d.chamada_publica_id == publicCallId);
-
-            var answer = await query.FirstOrDefaultAsync();
-
-            return (answer != null) ? new PublicCallAnswer(answer) : null;
-        }
-
-        public async Task<PublicCallAnswer?> GetByCooperativeIdPublicCallIdFoodId(Guid cooperativeId, Guid publicCallId, Guid foodId)
-        {
-            var query = this._context.ChamadaPublicaResposta!.Where(d => d.cooperativa_id == cooperativeId && d.chamada_publica_id == publicCallId && d.alimento_id == foodId);
 
             var answer = await query.FirstOrDefaultAsync();
 
@@ -86,6 +75,18 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
                                         .Include(cpr => cpr.ChamadaPublica)
                                         .Include(cpr => cpr.ChamadaPublicaEntregas)
                                         .Where(cpr => cpr.cooperativa_id == cooperativeId)
+                                        .AsNoTracking()
+                                        .Select(cpr => new PublicCallAnswer(cpr))
+                                        .ToListAsync();
+        }
+
+        public async Task<List<PublicCallAnswer>> GetAllByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId)
+        {
+            return await this._context.ChamadaPublicaResposta
+                                        .Include(cpr => cpr.Alimento)
+                                        .Include(cpr => cpr.ChamadaPublica)
+                                        .Include(cpr => cpr.ChamadaPublicaEntregas)
+                                        .Where(cpr => cpr.cooperativa_id == cooperativeId && cpr.chamada_publica_id == publicCallId)
                                         .AsNoTracking()
                                         .Select(cpr => new PublicCallAnswer(cpr))
                                         .ToListAsync();
@@ -124,6 +125,36 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
                                         .ToListAsync();
         }
 
+        public async Task<List<PublicCallAnswer>> GetAllWithCooperativeChamadaPublica(Guid cooperativeId, Guid publicCallId)
+        {
+            return await this._context.ChamadaPublicaResposta!
+                                        .Include(cpr => cpr.Cooperativa.Endereco)
+                                        .Include(cpr => cpr.Cooperativa.RepresentanteLegal.Endereco)
+                                        .Include(cpr => cpr.ChamadaPublica.ChamadaPublicaAlimentos).ThenInclude(cpa => cpa.Alimento)
+                                        .Where(cpr => cpr.cooperativa_id == cooperativeId && cpr.chamada_publica_id == publicCallId)
+                                        .AsNoTracking()
+                                        .Select(cpr => new PublicCallAnswer(cpr))
+                                        .ToListAsync();
+        }
+
+        public async Task<PublicCallAnswer?> GetByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId)
+        {
+            var query = this._context.ChamadaPublicaResposta!.Where(d => d.cooperativa_id == cooperativeId && d.chamada_publica_id == publicCallId);
+
+            var answer = await query.FirstOrDefaultAsync();
+
+            return (answer != null) ? new PublicCallAnswer(answer) : null;
+        }
+
+        public async Task<PublicCallAnswer?> GetByCooperativeIdPublicCallIdFoodId(Guid cooperativeId, Guid publicCallId, Guid foodId)
+        {
+            var query = this._context.ChamadaPublicaResposta!.Where(d => d.cooperativa_id == cooperativeId && d.chamada_publica_id == publicCallId && d.alimento_id == foodId);
+
+            var answer = await query.FirstOrDefaultAsync();
+
+            return (answer != null) ? new PublicCallAnswer(answer) : null;
+        }
+
         public async Task Save(PublicCallAnswer answer)
         {
             var toSave = await this._context.ChamadaPublicaResposta.FirstOrDefaultAsync(c => c.id == answer.id);
@@ -146,6 +177,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
             toSave.total_assentamento_pnra = answer.pnra_settlement_total;
             toSave.total_comunidade_quilombola = answer.quilombola_community_total;
             toSave.total_outros_agricultores_familiares = answer.other_family_agro_total;
+            toSave.somente_mulheres = answer.only_woman;
             toSave.foi_confirmada = answer.was_confirmed;
             toSave.foi_escolhida = answer.was_chosen;
             toSave.organico = answer.is_organic;

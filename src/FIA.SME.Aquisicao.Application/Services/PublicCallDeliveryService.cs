@@ -114,15 +114,15 @@ namespace FIA.SME.Aquisicao.Application.Services
         {
             // Seta a classificação
             return cooperatives
-                    .OrderByDescending(c => c.location_score) // 1- Localização pelo grupo de localização
-                    .ThenByDescending(c => c.percentage_inclusiveness) // 2- Critério de inclusividade (indigenas, aborigenes etc) - porcentagem em relação ao todo
-                    .ThenByDescending(c => c.proposal_is_organic) // 3- Se é organico ou não
-                    .ThenByDescending(c => c.cooperative_is_central) // 4- Se é cooperativa do tipo central ou não
-                    //.ThenByDescending(c => c.percentage_daps_fisicas) // 5- Proporção de daps fisicas / total de cooperados
-                    //.ThenByDescending(c => c.daps_fisicas_total) // 6- Maior número de daps fisicas
-                    .ThenBy(c => c.total_price) // 7- Menor preço
-                    .ThenBy(c => c.name) // 8- Nome
-                    .ToList();
+                   .OrderByDescending(c => c.location_score) // 1- Localização pelo grupo de localização (Local > Imediata > Intermediária > Estado > País)
+                   .ThenByDescending(c => c.percentage_inclusiveness) // 2- Critério de inclusividade (indigenas, aborigenes etc) - porcentagem em relação ao todo
+                   .ThenByDescending(c => c.proposal_is_organic) // 3- Se é organico ou não (organico > não organico)
+                   .ThenByDescending(c => c.percentage_daps_fisicas) // 4- Proporção de daps fisicas / total de cooperados
+                   .ThenBy(c => c.cooperative_is_central) // 5- Se é cooperativa do tipo central ou não (singular > central)
+                   //.ThenByDescending(c => c.daps_fisicas_total) // 6- Maior número de daps fisicas
+                   .ThenBy(c => c.total_price) // 6- Menor preço
+                   .ThenBy(c => c.name) // 7- Nome
+                   .ToList();
         }
 
         #endregion [ FIM - Privados ]

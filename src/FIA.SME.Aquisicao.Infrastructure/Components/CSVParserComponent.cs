@@ -17,7 +17,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Components
             var splittedValue = csvFileBase64.Split(',');
             var fileBase64 = splittedValue.Length > 1 ? splittedValue[1] : csvFileBase64;
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" };
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", HasHeaderRecord = false };
             CsvReader csv;
             using (var ms = new MemoryStream(Convert.FromBase64String(fileBase64)))
             {

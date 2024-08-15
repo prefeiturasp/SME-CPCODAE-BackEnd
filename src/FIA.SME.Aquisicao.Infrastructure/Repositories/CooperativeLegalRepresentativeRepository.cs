@@ -3,6 +3,7 @@ using FIA.SME.Aquisicao.Infrastructure.Repositories.Context;
 using FIA.SME.Aquisicao.Infrastructure.Interfaces;
 using FIA.SME.Aquisicao.Infrastructure.Repositories.Types;
 using Microsoft.EntityFrameworkCore;
+using FIA.SME.Aquisicao.Core.Helpers;
 
 namespace FIA.SME.Aquisicao.Infrastructure.Repositories
 {
@@ -62,9 +63,12 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
 
             toSave.id = legalRepresentative.id;
             toSave.endereco_id = legalRepresentative.address_id;
-            toSave.cpf = legalRepresentative.cpf;
-            toSave.nome = legalRepresentative.name;
-            toSave.telefone = legalRepresentative.phone;
+            toSave.cpf = legalRepresentative.cpf.Trim();
+            toSave.nome = legalRepresentative.name.Trim();
+            toSave.telefone = legalRepresentative.phone.Trim();
+            toSave.estado_civil = (int)legalRepresentative.marital_status;
+            toSave.cargo = legalRepresentative.position;
+            toSave.data_vigencia_mandato = legalRepresentative.position_expiration_date?.SetKindUtc();
         }
 
         public void Dispose()

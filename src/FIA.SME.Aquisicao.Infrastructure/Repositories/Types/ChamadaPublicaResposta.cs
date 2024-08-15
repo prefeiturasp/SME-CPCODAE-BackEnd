@@ -27,6 +27,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Types
         public bool foi_confirmada                      { get; set; }
         public bool foi_escolhida                       { get; set; }
         public bool organico                            { get; set; }
+        public bool somente_mulheres                    { get; set; }
         public bool validada                            { get; set; }
         public bool ativa                               { get; set; }
 

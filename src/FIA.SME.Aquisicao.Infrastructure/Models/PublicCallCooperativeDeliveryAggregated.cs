@@ -25,6 +25,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.pnra_settlement_total = answer.pnra_settlement_total;
             this.quilombola_community_total = answer.quilombola_community_total;
             this.other_family_agro_total = answer.other_family_agro_total;
+            this.only_woman = answer.only_woman;
             this.total_price = answer.price;
             this.proposal_is_organic = answer.is_organic;
             this.cooperative_is_central = answer.cooperative.pj_type == Core.Enums.CooperativePJTypeEnum.CentralCooperative;
@@ -33,8 +34,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.proposal_city_id = answer.public_call.city_id;
             this.members_validated = answer.members_validated;
             this.was_chosen = answer.was_chosen;
+            this.was_confirmed = answer.was_confirmed;
 
-            this.city_name = String.IsNullOrEmpty(cooperativeCityName) ? "Fora de São Paulo" : cooperativeCityName;
+            this.cooperative_city_name = String.IsNullOrEmpty(cooperativeCityName) ? "Fora de São Paulo" : cooperativeCityName;
             this.state_acronym = cooperativeStateAcronym;
 
             this.deliveries = new List<PublicCallCooperativeDeliveryInfo>();
@@ -58,6 +60,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public int pnra_settlement_total        { get; init; } = 0;
         public int quilombola_community_total   { get; init; } = 0;
         public int other_family_agro_total      { get; init; } = 0;
+        public bool only_woman { get; init; }
         public decimal total_delivered          { get; private set; }
         public decimal total_proposal           { get; private set; }
         public decimal? total_proposal_edited   { get; private set; }
@@ -69,11 +72,12 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public int proposal_city_id             { get; init; }
         public bool members_validated           { get; init; }
         public bool was_chosen                  { get; init; }
+        public bool was_confirmed               { get; init; }
 
-        private string city_name                { get; init; }
-        private string state_acronym            { get; init; }
+        private string cooperative_city_name                { get; init; }
+        public string state_acronym             { get; init; }
 
-        public string location                  { get { return String.IsNullOrEmpty(this.city_name) ? String.Empty : (String.IsNullOrEmpty(this.state_acronym) ? this.city_name : $"{this.city_name}/{this.state_acronym}"); } }
+        public string location                  { get { return String.IsNullOrEmpty(this.cooperative_city_name) ? String.Empty : (String.IsNullOrEmpty(this.state_acronym) ? this.cooperative_city_name : $"{this.cooperative_city_name}/{this.state_acronym}"); } }
 
         public decimal percentage_daps_fisicas
         {
@@ -144,40 +148,30 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
 
         public void SetLocationScore(List<LocationRegion> locationRegions)
         {
-            if (this.cooperative_city_id == this.proposal_city_id)
-            {
-                this.location_score = 5;
-                return;
-            }
+            this.location_score = GetLocationScore(this.cooperative_city_id, this.proposal_city_id, locationRegions);
+        }
 
-            var locationRegionCooperativeCity = locationRegions.FirstOrDefault(lr => lr.id == this.cooperative_city_id);
-            var locationRegionProposalCity = locationRegions.FirstOrDefault(lr => lr.id == this.proposal_city_id);
+        public static int GetLocationScore(int cooperative_city_id, int proposal_city_id, List<LocationRegion> locationRegions)
+        {
+            if (cooperative_city_id == proposal_city_id)
+                return 5;
+
+            var locationRegionCooperativeCity = locationRegions.FirstOrDefault(lr => lr.id == cooperative_city_id);
+            var locationRegionProposalCity = locationRegions.FirstOrDefault(lr => lr.id == proposal_city_id);
 
             if (locationRegionCooperativeCity == null || locationRegionProposalCity == null)
-            {
-                this.location_score = 0;
-                return;
-            }
+                return 0;
 
             if (locationRegionCooperativeCity.imediate_region_id == locationRegionProposalCity.imediate_region_id)
-            {
-                this.location_score = 4;
-                return;
-            }
+                return 4;
 
             if (locationRegionCooperativeCity.intermediate_region_id == locationRegionProposalCity.intermediate_region_id)
-            {
-                this.location_score = 3;
-                return;
-            }
+                return 3;
 
             if (locationRegionCooperativeCity.state_acronym == locationRegionProposalCity.state_acronym)
-            {
-                this.location_score = 2;
-                return;
-            }
+                return 2;
 
-            this.location_score = 1;
+            return 1;
         }
 
         #endregion [ FIM - Metodos ]

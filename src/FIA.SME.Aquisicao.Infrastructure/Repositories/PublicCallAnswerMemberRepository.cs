@@ -3,8 +3,6 @@ using FIA.SME.Aquisicao.Infrastructure.Models;
 using FIA.SME.Aquisicao.Infrastructure.Repositories.Context;
 using FIA.SME.Aquisicao.Infrastructure.Repositories.Types;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FIA.SME.Aquisicao.Infrastructure.Repositories
 {
@@ -13,6 +11,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
         Task Delete(PublicCallAnswerMember member);
         Task DeleteByPublicCallAnswerId(Guid publicCallAnswerId);
         Task<List<PublicCallAnswerMember>> GetAllByPublicCallAnswerId(Guid publicCallAnswerId, bool keepTrack);
+        Task<List<PublicCallAnswerMember>> GetAllByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId);
         Task Save(PublicCallAnswerMember answerMember);
     }
 
@@ -64,6 +63,17 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
             var members = query.Select(cprc => new PublicCallAnswerMember(cprc)).ToList();
 
             return members;
+        }
+
+        public async Task<List<PublicCallAnswerMember>> GetAllByCooperativeIdPublicCallId(Guid cooperativeId, Guid publicCallId)
+        {
+            return await this._context.ChamadaPublicaRespostaCooperado
+                                        .Include(cprc => cprc.Cooperado)
+                                        .Include(cprc => cprc.ChamadaPublicaResposta.Alimento)
+                                        .Where(cprc => cprc.ChamadaPublicaResposta.cooperativa_id == cooperativeId && cprc.ChamadaPublicaResposta.chamada_publica_id == publicCallId)
+                                        .AsNoTracking()
+                                        .Select(cprc => new PublicCallAnswerMember(cprc))
+                                        .ToListAsync();
         }
 
         public async Task Save(PublicCallAnswerMember answerMember)

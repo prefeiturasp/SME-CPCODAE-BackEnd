@@ -19,6 +19,8 @@ namespace FIA.SME.Aquisicao.Core.Enums
         [Description("Suspensa")] // Terá efeito temporário e será futuramente cancelada e cadastrada uma nova chamada
         Suspensa = 6,
         [Description("Cancelada")]
-        Cancelada = 7
+        Cancelada = 7,
+        [Description("Deserta")] // Quando a chamada não tiver nenhuma resposta de cooperativa (status final)
+        Deserta = 8
     }
 }

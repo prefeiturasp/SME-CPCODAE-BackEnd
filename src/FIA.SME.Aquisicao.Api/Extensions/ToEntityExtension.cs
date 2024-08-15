@@ -6,6 +6,30 @@ namespace FIA.SME.Aquisicao.Api.Extensions
 {
     public static class ToEntityExtension
     {
+        #region [ Contact ]
+
+        public static FaleConoscoResponseModel? ToResponseModel(this Contact model)
+        {
+            if (model == null)
+                return null;
+
+            var response = new FaleConoscoResponseModel(model.id, model.cooperative.name!, model.publicCall.name, model.message, model.subject, model.creation_date);
+
+            return response;
+        }
+
+        public static FaleConoscoListResponseModel? ToListResponseModel(this Contact model)
+        {
+            if (model == null)
+                return null;
+
+            var response = new FaleConoscoListResponseModel(model.id, model.cooperative.name!, model.publicCall.name, model.subject, model.creation_date);
+
+            return response;
+        }
+
+        #endregion [ FIM - Contact ]
+
         #region [ Cooperative ]
 
         public static Cooperative? ToCooperative(this CooperativeRegister model)
@@ -13,8 +37,8 @@ namespace FIA.SME.Aquisicao.Api.Extensions
             if (model == null)
                 return null;
 
-            var cooperative = new Cooperative(model.id, Guid.Empty, model.name, model.acronym, model.email, model.phone, model.cnpj, model.cnpj_central, model.is_dap, model.dap_caf_code,
-                model.dap_caf_registration_date, model.dap_caf_expiration_date, model.pj_type, model.production_type, CooperativeStatusEnum.AwaitingEmailConfirmation, model.terms_use_acceptance_ip,
+            var cooperative = new Cooperative(model.id, Guid.Empty, model.name.Trim(), model.acronym.Trim(), model.email.Trim(), model.logo, model.phone.Trim(), model.cnpj.Trim(), model.cnpj_central?.Trim(), model.is_dap, model.dap_caf_code.Trim(),
+                model.dap_caf_registration_date, model.dap_caf_expiration_date, model.pj_type, model.production_type, CooperativeStatusEnum.AwaitingEmailConfirmation, model.terms_use_acceptance_ip.Trim(),
                 DateTime.UtcNow, true, new List<CooperativeDocument>(), new List<CooperativeMember>());
 
             return cooperative;

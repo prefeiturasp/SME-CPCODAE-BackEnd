@@ -20,6 +20,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories.Types
         public string? cnpj_central                     { get; set; }
         public string codigo_dap_caf                    { get; set; }
         public string? email                            { get; set; }
+        public string logo                              { get; set; }
         public string ip_aceite_termos_uso              { get; set; }
         public string? razao_social                     { get; set; }
         public string? sigla                            { get; set; }

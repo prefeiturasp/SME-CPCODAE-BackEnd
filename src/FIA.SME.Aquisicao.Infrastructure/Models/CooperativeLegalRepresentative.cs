@@ -1,4 +1,5 @@
-﻿using FIA.SME.Aquisicao.Infrastructure.Repositories.Types;
+﻿using FIA.SME.Aquisicao.Core.Enums;
+using FIA.SME.Aquisicao.Infrastructure.Repositories.Types;
 
 namespace FIA.SME.Aquisicao.Infrastructure.Models
 {
@@ -8,12 +9,15 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
 
         internal CooperativeLegalRepresentative() { }
 
-        public CooperativeLegalRepresentative(Guid id, string cpf, string name, string phone)
+        public CooperativeLegalRepresentative(Guid id, string cpf, string name, string phone, MaritalStatusEnum marital_status, string position, DateTime? position_expiration_date)
         {
             this.id = id;
             this.cpf = cpf;
             this.name = name;
             this.phone = phone;
+            this.marital_status = marital_status;
+            this.position = position;
+            this.position_expiration_date = position_expiration_date;
         }
 
         internal CooperativeLegalRepresentative(RepresentanteLegal representanteLegal)
@@ -25,6 +29,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.cpf = representanteLegal.cpf;
             this.name = representanteLegal.nome;
             this.phone = representanteLegal.telefone;
+            this.position = representanteLegal.cargo;
+            this.position_expiration_date = representanteLegal.data_vigencia_mandato;
+            this.marital_status = (MaritalStatusEnum)representanteLegal.estado_civil;
         }
 
         #endregion [ FIM - Construtores ]
@@ -36,6 +43,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public string cpf       { get; private set; }
         public string name      { get; private set; }
         public string phone     { get; private set; }
+        public string position { get; set; } = String.Empty;
+        public DateTime? position_expiration_date { get; set; }
+        public MaritalStatusEnum marital_status { get; set; }
 
         public Address address  { get; private set; }
 

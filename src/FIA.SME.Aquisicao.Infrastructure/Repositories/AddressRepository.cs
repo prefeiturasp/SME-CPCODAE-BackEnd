@@ -72,12 +72,12 @@ namespace FIA.SME.Aquisicao.Infrastructure.Repositories
             }
 
             toSave.id = address.id;
-            toSave.bairro = address.district;
-            toSave.cep = address.cep;
+            toSave.bairro = address.district.Trim();
+            toSave.cep = address.cep.Trim();
             toSave.codigo_cidade_ibge = address.city_id;
-            toSave.complemento = address.complement;
-            toSave.numero = address.number;
-            toSave.logradouro = address.street;
+            toSave.complemento = address.complement?.Trim();
+            toSave.numero = address.number.Trim();
+            toSave.logradouro = address.street.Trim();
         }
 
         public void Dispose()

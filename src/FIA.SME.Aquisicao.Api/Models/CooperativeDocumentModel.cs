@@ -15,10 +15,13 @@ namespace FIA.SME.Aquisicao.Api.Models
             this.document_type_id = document.document_type_id;
             this.food_id = document.food_id;
             this.public_call_id = document.public_call_id;
+            this.user_id = document.user_id;
+            this.reviewer_name = document.reviewer_name;
             this.document_type_name = document.document_type_name;
             this.document_path = document.document_path;
             this._file_size = document.file_size;
             this.creation_date = document.creation_date.ToLocalTime();
+            this.reviewed_date = document.reviewed_date?.ToLocalTime();
             this.application = document.application;
             this.is_current = document.is_current;
             this.is_reviewed = document.is_reviewed;
@@ -31,11 +34,14 @@ namespace FIA.SME.Aquisicao.Api.Models
         public Guid document_type_id        { get; set; }
         public Guid? food_id                { get; set; }
         public Guid? public_call_id         { get; set; }
+        public Guid? user_id                { get; set; }
+        public string? reviewer_name        { get; set; }
         public string document_type_name    { get; set; } = String.Empty;
         public string document_path         { get; set; } = String.Empty;
         public string file_name             { get { return String.IsNullOrEmpty(this.document_path) ? String.Empty : System.IO.Path.GetFileName(this.document_path); } }
         public string file_size             { get { return SMEHelper.GetSizeWithSuffix(this._file_size); } }
         public DateTime creation_date       { get; set; }
+        public DateTime? reviewed_date      { get; set; }
         public int application              { get; set; }
         public bool is_current              { get; set; }
         public bool is_reviewed              { get; set; }

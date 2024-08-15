@@ -26,9 +26,11 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.document_type_id = documento.tipo_documento_id;
             this.food_id = documento.alimento_id;
             this.public_call_id = documento.chamada_publica_id;
+            this.user_id = documento.usuario_id;
             this.document_path = documento.documento_path;
             this.file_size = documento.documento_tamanho;
             this.creation_date = documento.data_criacao;
+            this.reviewed_date = documento.data_revisao;
             this.is_current = documento.is_atual;
             this.is_reviewed = documento.is_revisado;
 
@@ -36,6 +38,11 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             {
                 this.document_type_name = documento.TipoDocumento.nome;
                 this.application = documento.TipoDocumento.aplicacao;
+            }
+
+            if (documento.Usuario != null)
+            {
+                this.reviewer_name = documento.Usuario.nome;
             }
         }
 
@@ -48,13 +55,17 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public Guid document_type_id        { get; private set; }
         public Guid? food_id                { get; private set; }
         public Guid? public_call_id         { get; private set; }
+        public Guid? user_id                { get; private set; }
         public string document_type_name    { get; private set; }
         public string document_path         { get; private set; }
         public Int64 file_size              { get; private set; }
         public DateTime creation_date       { get; private set; }
+        public DateTime? reviewed_date { get; private set; }
         public int application              { get; private set; }
         public bool is_current              { get; private set; } = false;
         public bool is_reviewed             { get; private set; } = false;
+
+        public string? reviewer_name { get; private set; }
 
         #endregion [ FIM - Propriedades ]
 
@@ -71,9 +82,11 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.is_current = true;
         }
 
-        public void SetAsReviewed(bool isReviewed)
+        public void SetAsReviewed(bool isReviewed, Guid userId)
         {
             this.is_reviewed = isReviewed;
+            this.user_id = isReviewed ? userId : null;
+            this.reviewed_date = isReviewed ? DateTime.Now : null;
         }
 
         #endregion [ FIM - Metodos ]

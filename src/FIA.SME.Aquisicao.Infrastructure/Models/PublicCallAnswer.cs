@@ -10,7 +10,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         internal PublicCallAnswer() { }
 
         public PublicCallAnswer(Guid id, Guid cooperative_id, Guid food_id, Guid public_call_id, int city_id, decimal price, decimal quantity, bool is_organic, int city_members_total,
-            int daps_fisicas_total, int indigenous_community_total, int pnra_settlement_total, int quilombola_community_total, int other_family_agro_total)
+            int daps_fisicas_total, int indigenous_community_total, int pnra_settlement_total, int quilombola_community_total, int other_family_agro_total, bool only_woman)
         {
             this.id = id;
             this.cooperative_id = cooperative_id;
@@ -26,6 +26,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.pnra_settlement_total = pnra_settlement_total;
             this.quilombola_community_total = quilombola_community_total;
             this.other_family_agro_total = other_family_agro_total;
+            this.only_woman = only_woman;
             this.is_active = true;
         }
 
@@ -42,6 +43,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.pnra_settlement_total = chamadaPublicaResposta.total_assentamento_pnra;
             this.quilombola_community_total = chamadaPublicaResposta.total_comunidade_quilombola;
             this.other_family_agro_total = chamadaPublicaResposta.total_outros_agricultores_familiares;
+            this.only_woman = chamadaPublicaResposta.somente_mulheres;
             this.price = chamadaPublicaResposta.preco;
             this.quantity = chamadaPublicaResposta.quantidade;
             this.quantity_edited = chamadaPublicaResposta.quantidade_editada;
@@ -87,6 +89,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public int pnra_settlement_total        { get; private set; }
         public int quilombola_community_total   { get; private set; }
         public int other_family_agro_total      { get; private set; }
+        public bool only_woman                  { get; private set; }
         public decimal price                    { get; private set; }
         public decimal quantity                 { get; private set; }
         public decimal? quantity_edited         { get; private set; }
@@ -136,6 +139,17 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public void SetWasValidated(bool wasValidated)
         {
             this.members_validated = wasValidated;
+        }
+
+        public void UpdateMembersInfo(int city_id, int daps_fisicas_total, int indigenous_community_total, int pnra_settlement_total, int quilombola_community_total, int other_family_agro_total, bool only_woman)
+        {
+            this.city_id = city_id;
+            this.daps_fisicas_total = daps_fisicas_total;
+            this.indigenous_community_total = indigenous_community_total;
+            this.pnra_settlement_total = pnra_settlement_total;
+            this.quilombola_community_total = quilombola_community_total;
+            this.other_family_agro_total = other_family_agro_total;
+            this.only_woman = only_woman;
         }
 
         #endregion [ FIM - Metodos ]

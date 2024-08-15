@@ -25,6 +25,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.pnra_settlement_total = answer.pnra_settlement_total;
             this.quilombola_community_total = answer.quilombola_community_total;
             this.other_family_agro_total = answer.other_family_agro_total;
+            this.only_woman = answer.only_woman;
             this.total_price = answer.price;
             this.proposal_is_organic = answer.is_organic;
             this.cooperative_is_central = answer.cooperative.pj_type == Core.Enums.CooperativePJTypeEnum.CentralCooperative;
@@ -35,8 +36,9 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
             this.total_delivered = 0;
             this.members_validated = answer.members_validated;
             this.was_chosen = answer.was_chosen;
+            this.was_confirmed = answer.was_confirmed;
 
-            this.city_name = cooperativeCityName;
+            this.cooperative_city_name = cooperativeCityName;
             this.state_acronym = cooperativeStateAcronym;
         }
 
@@ -58,6 +60,7 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public int pnra_settlement_total        { get; init; } = 0;
         public int quilombola_community_total   { get; init; } = 0;
         public int other_family_agro_total      { get; init; } = 0;
+        public bool only_woman { get; init; }
         public decimal total_delivered          { get; private set; }
         public decimal total_proposal           { get; private set; }
         public decimal? total_proposal_edited   { get; private set; }
@@ -69,11 +72,12 @@ namespace FIA.SME.Aquisicao.Infrastructure.Models
         public int proposal_city_id             { get; init; }
         public bool members_validated           { get; init; }
         public bool was_chosen                  { get; init; }
+        public bool was_confirmed               { get; init; }
 
-        private string city_name                { get; init; }
-        private string state_acronym            { get; init; }
+        private string cooperative_city_name                { get; init; }
+        public string state_acronym             { get; init; }
 
-        public string location                  { get { return String.IsNullOrEmpty(this.city_name) ? String.Empty : (String.IsNullOrEmpty(this.state_acronym) ? this.city_name : $"{this.city_name}/{this.state_acronym}"); } }
+        public string location                  { get { return String.IsNullOrEmpty(this.cooperative_city_name) ? String.Empty : (String.IsNullOrEmpty(this.state_acronym) ? this.cooperative_city_name : $"{this.cooperative_city_name}/{this.state_acronym}"); } }
 
         public decimal percentage_daps_fisicas
         {
