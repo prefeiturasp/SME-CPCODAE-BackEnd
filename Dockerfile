@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -13,7 +13,7 @@ WORKDIR /src
 RUN dotnet publish "src/FIA.SME.Aquisicao.Api/FIA.SME.Aquisicao.Api.csproj" -c Release -o publish
 
 # Define a imagem do runtime
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 RUN ["apt-get", "update"]
 RUN apt-get install vim -y
